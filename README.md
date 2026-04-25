@@ -1,63 +1,74 @@
-# modultespitci-python
+# 🌡️ Privacy-Preserving Thermal Fall Detection System
 
-## Overview
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Hardware](https://img.shields.io/badge/Hardware-Raspberry_Pi-C51A4A.svg)]()
+[![Sensor](https://img.shields.io/badge/Sensor-MLX90640_Thermal-orange.svg)]()
+[![MQTT](https://img.shields.io/badge/Protocol-MQTT-660066.svg)]()
+[![Grant](https://img.shields.io/badge/Grant-TÜBİTAK_2209--A-red.svg)]()
 
-The `modultespitci-python` project is a sophisticated thermal imaging and fall detection system designed for real-time monitoring. Leveraging the MLX90640 thermal camera, this system captures thermal data, processes it to identify warmer regions, and employs advanced algorithms to detect potential falls. The system integrates with an MQTT broker for remote monitoring and alerts, enabling seamless communication and actionable insights.
+> **🏆 Supported by TÜBİTAK (The Scientific and Technological Research Council of Turkey) under the 2209-A University Students Research Projects Support Program.**
 
-This project is built with a focus on robustness and accuracy, providing a reliable solution for applications requiring continuous thermal surveillance and immediate fall detection.
+## 📌 Overview
 
-## Features
+Falls are a major health risk for the elderly and mobility-impaired individuals, especially in high-risk indoor environments like bathrooms or bedrooms. Traditional camera-based monitoring systems heavily compromise user privacy. 
 
-*   **Real-time Thermal Imaging:** Captures and processes thermal data from the MLX90640 sensor.
-*   **Advanced Fall Detection:** Implements algorithms to detect potential falls based on thermal data analysis and image processing.
-*   **MQTT Integration:** Connects to an MQTT broker for publishing alerts and receiving commands.
-*   **Customizable Thresholds:** Allows for adjustment of temperature thresholds for warmer region detection.
-*   **Image Processing:** Utilizes libraries like OpenCV and Matplotlib for image manipulation, saving, and visualization.
-*   **Error Handling:** Includes mechanisms to handle potential errors during sensor reading and data processing.
-*   **Secure Communication:** Supports TLS for secure MQTT connections.
+This project solves that problem by using an **MLX90640 Thermal Camera** paired with a **Raspberry Pi**. Instead of capturing RGB video, the system analyzes low-resolution thermal heatmaps. It detects human presence based on temperature thresholds (30°C - 40°C) and identifies sudden falls by analyzing the spatial distribution of these heat signatures.
 
-## Project Structure
+When a fall is detected, the system immediately triggers an alert via **MQTT**, which is then pushed to a companion mobile application built with Flutter.
 
-```
-.
-├── LICENSE
-├── asd.py
-├── tespit-sistem.py
-├── test.py
-├── test2.py
-└── testtt.py
-```
+*(Insert your hardware/thermal heatmap photo here)*
 
-## Getting Started
+## 🚀 Key Features
 
-To run the `modultespitci-python` project, you will need to have the necessary hardware (MLX90640 thermal camera, Raspberry Pi or compatible board) and Python libraries installed.
+* **100% Privacy-Preserving:** No recognizable visual data is ever captured, making it safe for bedrooms and bathrooms.
+* **Edge Computing:** All thermal image processing (masking, thresholding, blob detection) is done locally on the Raspberry Pi using OpenCV and NumPy.
+* **Real-time IoT Communication:** Integrates seamlessly with a Cloud MQTT Broker (HiveMQ) over TLS for secure, instant alert transmission.
+* **Remote Control:** The system can be armed/disarmed remotely, and authorized users can request a snapshot of the thermal heatmap via the mobile app.
+* **Cross-Platform Companion App:** Works in tandem with the [Takip Sistem Flutter App](https://github.com/ilkay-onay/takipsistem) for real-time notifications.
 
-1.  **Install Dependencies:**
-    Ensure you have the required libraries installed. You can install them using pip:
+## 🏗️ System Architecture
 
-    ```bash
-    pip install adafruit-circuitpython-mlx90640 paho-mqtt numpy opencv-python matplotlib
-    ```
+1. **Hardware:** MLX90640 Infrared Thermal Camera + Raspberry Pi 4.
+2. **Detection Logic:** 
+   * Captures 24x32 thermal arrays.
+   * Flattens and masks temperatures within the human body range (30.0°C - 40.0°C).
+   * Calculates the percentage of the frame occupied by the heat signature.
+   * Exceeding a dynamically calibrated threshold triggers the "Fall Detected" state.
+3. **Communication:** Alerts and Base64-encoded thermal snapshots are published to an MQTT topic (`fall_detection/alert`).
 
-2.  **Configure MQTT:**
-    The `tespit-sistem.py` script requires MQTT credentials and broker details. Update the following lines in `tespit-sistem.py` with your specific information:
+## 💻 Hardware & Software Requirements
 
-    ```python
-    client.username_pw_set("cokgucluisim", "cokguclubirsifre")
-    client.connect("12b10b214cce489e91869af533703219.s1.eu.hivemq.cloud", 8883)
-    ```
+* **Hardware:**
+  * Raspberry Pi (3B+ or 4)
+  * MLX90640 I2C Thermal Camera
+* **Software/Libraries:**
+  * Python 3
+  * `adafruit-circuitpython-mlx90640`
+  * `opencv-python-headless`
+  * `paho-mqtt`
+  * `numpy` & `matplotlib`
 
-3.  **Run the System:**
-    To start the thermal imaging and fall detection system, execute the main script:
+## ⚙️ Quick Start
 
-    ```bash
-    python tespit-sistem.py
-    ```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/ilkay-onay/Thermal-Fall-Detection-IoT.git
+   cd Thermal-Fall-Detection-IoT
+   ```
 
-    This will initialize the thermal camera, connect to the MQTT broker, and begin processing thermal data for fall detection.
+2. **Install dependencies:**
+   Ensure I2C is enabled on your Raspberry Pi.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    **Note:** The `asd.py` script is for live camera display, and `test.py`, `test2.py`, and `testtt.py` are for testing specific functionalities of the thermal camera and detection algorithms.
+3. **Configure MQTT:**
+   Set your MQTT credentials in the `.env` file.
 
-## License
+4. **Run the system:**
+   ```bash
+   python main.py
+   ```
 
-This project is licensed under the GNU General Public License v3.0. See the `LICENSE` file for more details.
+## 📜 License
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
