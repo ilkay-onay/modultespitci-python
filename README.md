@@ -16,7 +16,9 @@ This project solves that problem by using an **MLX90640 Thermal Camera** paired 
 
 When a fall is detected, the system immediately triggers an alert via **MQTT**, which is then pushed to a companion mobile application built with Flutter.
 
-![Thermal Heatmap](fallen.jpg)
+<p align="center">
+  <img src="fallen.jpg" width="400"/>
+</p>
 
 ## 🚀 Key Features
 
